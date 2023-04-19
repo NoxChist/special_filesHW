@@ -7,9 +7,9 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
@@ -18,8 +18,10 @@ public class Main {
         String fileName = "data.csv";
         List<Employee> list = parseCSV(columnMapping, fileName);
         String json = listToJson(list);
-        writeFile("data.json", json);
-
+        try {
+            Files.writeString(Path.of("data2.json"), json);
+        } catch (Exception e) {
+        }
     }
 
     public static List<Employee> parseCSV(String[] columnMapping, String fileName) {
@@ -34,7 +36,6 @@ public class Main {
             return csv.parse();
         } catch (Exception e) {
         }
-        ;
         return null;
     }
 
@@ -45,12 +46,5 @@ public class Main {
         Type listType = new TypeToken<List<Employee>>() {
         }.getType();
         return gson.toJson(list, listType);
-    }
-
-    public static void writeFile(String filePath, String value) {
-        try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write(value);
-        } catch (IOException e) {
-        }
     }
 }
